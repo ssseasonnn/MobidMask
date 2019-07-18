@@ -7,12 +7,14 @@ import zlc.season.morbidmask.Val
 @Val("test")
 class MainActivity : AppCompatActivity() {
 
-    val params by lazy { MainActivityParams.of(this) }
+    val params by lazy { MainTestActivityParams.of(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val test = params.test
+
+        MainActivityParams.of(this).test
     }
 }
