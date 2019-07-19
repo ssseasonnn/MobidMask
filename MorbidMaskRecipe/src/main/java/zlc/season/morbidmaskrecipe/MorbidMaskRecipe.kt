@@ -12,6 +12,7 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic
 
+
 @AutoService(Processor::class)
 class MorbidMaskRecipe : AbstractProcessor() {
 
@@ -31,7 +32,6 @@ class MorbidMaskRecipe : AbstractProcessor() {
         messager = processingEnv.messager
         elementUtils = processingEnv.elementUtils
         filer = processingEnv.filer
-        "init".logw()
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> {
@@ -47,13 +47,9 @@ class MorbidMaskRecipe : AbstractProcessor() {
 
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
-        annotations.toString().logw()
         "process".logw()
 
         val paramsElements = roundEnv.getElementsAnnotatedWith(Params::class.java)
-
-        paramsElements.toString().logw()
-
         paramsElements.forEach {
             val paramsAnnotation = it.getAnnotation(Params::class.java)
             val valList = paramsAnnotation.value
@@ -64,8 +60,6 @@ class MorbidMaskRecipe : AbstractProcessor() {
         }
 
         val mutableParamsElements = roundEnv.getElementsAnnotatedWith(MutableParams::class.java)
-        mutableParamsElements.toString().logw()
-
         mutableParamsElements.forEach {
             val mutableParamsAnnotation = it.getAnnotation(MutableParams::class.java)
             val varList = mutableParamsAnnotation.value
@@ -77,18 +71,9 @@ class MorbidMaskRecipe : AbstractProcessor() {
 
 
         paramsInfoMap.forEach { (element, paramsInfoList) ->
-            val type = elementUtils.getTypeElement("android.support.v7.app.AppCompatActivity").asType()
-            type.toString().logw()
-
-            element.asType().toString().logw()
             val typeMirror = element.asType()
 
-            "super types:".logw()
-            val directSupertypes = processingEnv.typeUtils.directSupertypes(typeMirror)
-            directSupertypes.toString().logw()
-
-            val subtype = processingEnv.typeUtils.isSubtype(element.asType(), type)
-            subtype.toString().logw()
+            val subtypeOfType = typeMirror.isSubType("android.app.Activity")
 
             val file = ParamsFileGenerator(element, paramsInfoList).generate()
             val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
@@ -110,6 +95,7 @@ class MorbidMaskRecipe : AbstractProcessor() {
         }
         list.add(paramsInfo)
     }
+
 
     private fun String.logn() {
         messager.printMessage(Diagnostic.Kind.NOTE, this)
