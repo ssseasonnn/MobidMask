@@ -2,9 +2,22 @@ package zlc.season.morbidmask
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS)
+annotation class Params(
+    vararg val value: Val
+)
+
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+annotation class MutableParams(
+    vararg val value: Var
+)
+
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
 annotation class Val(
     val key: String,
-    val type: Int = string
+    val type: String = string
 )
 
 
@@ -12,25 +25,26 @@ annotation class Val(
 @Target(AnnotationTarget.CLASS)
 annotation class Var(
     val key: String,
-    val type: Int = string
+    val type: String = string
 )
 
-@Var("aaa", int)
+@Params(
+    Val("123"),
+    Val("sdf")
+)
+@Var("aaa", string)
 class Test {
     val test: String = ""
 }
 
-//enum class Type{
-//    Byte,Short,Int,Long,Float,Double,Char,Boolean,String
-//}
-const val byte = 0
-const val short = 1
-const val int = 2
-const val long = 3
-const val float = 4
-const val double = 5
-const val char = 6
-const val boolean = 7
-const val string = 8
+const val byte = "Byte"
+const val short = "Short"
+const val int = "Int"
+const val long = "Long"
+const val float = "Float"
+const val double = "Double"
+const val char = "Char"
+const val boolean = "Boolean"
+const val string = "String"
 
 

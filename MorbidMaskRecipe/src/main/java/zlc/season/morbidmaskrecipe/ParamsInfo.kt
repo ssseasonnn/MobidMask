@@ -2,5 +2,6 @@ package zlc.season.morbidmaskrecipe
 
 class ParamsInfo(
     val key: String,
-    val type: Int
+    val type: String,
+    val isMutable: Boolean
 )

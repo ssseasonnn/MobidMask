@@ -1,8 +1,8 @@
 package zlc.season.morbidmaskrecipe
 
-import com.google.auto.common.MoreElements
 import com.google.auto.service.AutoService
-import com.squareup.kotlinpoet.*
+import zlc.season.morbidmask.MutableParams
+import zlc.season.morbidmask.Params
 import zlc.season.morbidmask.Val
 import zlc.season.morbidmask.Var
 import java.io.File
@@ -33,6 +33,7 @@ class MorbidMaskRecipe : AbstractProcessor() {
         messager = processingEnv.messager
         elementUtils = processingEnv.elementUtils
         filer = processingEnv.filer
+        "init".logw()
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> {
@@ -43,88 +44,60 @@ class MorbidMaskRecipe : AbstractProcessor() {
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {
-        return SourceVersion.latestSupported()
+        return SourceVersion.latest()
     }
 
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
 
-        val valElements = roundEnv.getElementsAnnotatedWith(Val::class.java)
+        "process".logw()
 
-        valElements.forEach {
-            val annotation = it.getAnnotation(Val::class.java)
-            val targetPackage = MoreElements.getPackage(it).qualifiedName.toString()
-            val targetName = it.simpleName.toString() + "Params"
+        val paramsElements = roundEnv.getElementsAnnotatedWith(Params::class.java)
+        paramsElements.toString().logw()
 
-            val className = ClassName(targetPackage, targetName)
-            val paramsInfo = paramsInfoMap[it]
-            if (paramsInfo == null) {
-                paramsInfoMap[it] = mutableListOf()
-            } else {
-                paramsInfo.add(ParamsInfo(annotation.key, annotation.type))
+        paramsElements.forEach {
+            val paramsAnnotation = it.getAnnotation(Params::class.java)
+            val valList = paramsAnnotation.value
+            valList.forEach { each ->
+                val paramsInfo = ParamsInfo(each.key, each.type, false)
+                saveParamsInfo(it, paramsInfo)
             }
         }
 
-        val varElements = roundEnv.getElementsAnnotatedWith(Var::class.java)
-        varElements.forEach {
-            val annotation = it.getAnnotation(Var::class.java)
-            val paramsInfo = paramsInfoMap[it]
-            if (paramsInfo == null) {
-                paramsInfoMap[it] = mutableListOf()
-            } else {
-                paramsInfo.add(ParamsInfo(annotation.key, annotation.type))
+        val mutableParamsElements = roundEnv.getElementsAnnotatedWith(MutableParams::class.java)
+        mutableParamsElements.toString().logw()
+
+        mutableParamsElements.forEach {
+            val mutableParamsAnnotation = it.getAnnotation(MutableParams::class.java)
+            val varList = mutableParamsAnnotation.value
+            varList.forEach { each ->
+                val paramsInfo = ParamsInfo(each.key, each.type, true)
+                saveParamsInfo(it, paramsInfo)
             }
         }
 
 
-        paramsInfoMap.forEach { element, mutableList ->
-
-            val targetPackage = MoreElements.getPackage(element).qualifiedName.toString()
-            val targetName = element.simpleName.toString()
-            val generateName = targetName + "Params"
-
-            val targetClass = ClassName(targetPackage, targetName)
-            val generateClass = ClassName(targetPackage, generateName)
-
-            val companion = TypeSpec.companionObjectBuilder()
-                .addFunction(
-                    FunSpec.builder("of")
-                        .addParameter("activity", targetClass)
-                        .addStatement("return $generateName(activity)")
-                        .returns(generateClass)
-                        .build()
-                )
-                .build()
-
-
-            val file = FileSpec.builder(targetPackage, generateName)
-                .addType(
-                    TypeSpec.classBuilder(generateName)
-                        .primaryConstructor(
-                            FunSpec.constructorBuilder()
-                                .addParameter("activity", targetClass)
-                                .build()
-                        )
-                        .addProperty("test", STRING)
-                        .addInitializerBlock(
-                            CodeBlock.builder()
-                                .add(
-                                    """test = activity.intent.getStringExtra("test")?:""
-                                    """.trimMargin()
-                                )
-                                .build()
-                        )
-                        .addType(companion)
-                        .build()
-                )
-                .build()
-
+        paramsInfoMap.forEach { (element, paramsInfoList) ->
+            val file = ParamsFileGenerator(element, paramsInfoList).generate()
             val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
             file.writeTo(File(kaptKotlinGeneratedDir))
         }
         return false
     }
 
+    private fun saveParamsInfo(element: Element, paramsInfo: ParamsInfo) {
+        var list = paramsInfoMap[element]
+        if (list == null) {
+            val newList = mutableListOf<ParamsInfo>()
+            list = newList
+            paramsInfoMap[element] = newList
+        }
+
+        if (list.find { it.key == paramsInfo.key } != null) {
+            "Found duplicate key [${paramsInfo.key}] on class ${element.simpleName}".loge()
+        }
+        list.add(paramsInfo)
+    }
 
     private fun String.logn() {
         messager.printMessage(Diagnostic.Kind.NOTE, this)
