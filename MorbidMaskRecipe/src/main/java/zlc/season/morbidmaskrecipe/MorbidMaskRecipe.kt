@@ -3,8 +3,6 @@ package zlc.season.morbidmaskrecipe
 import com.google.auto.service.AutoService
 import zlc.season.morbidmask.MutableParams
 import zlc.season.morbidmask.Params
-import zlc.season.morbidmask.Val
-import zlc.season.morbidmask.Var
 import java.io.File
 import java.util.*
 import javax.annotation.processing.*
@@ -38,8 +36,8 @@ class MorbidMaskRecipe : AbstractProcessor() {
 
     override fun getSupportedAnnotationTypes(): Set<String> {
         val types = LinkedHashSet<String>()
-        types.add(Val::class.java.canonicalName)
-        types.add(Var::class.java.canonicalName)
+        types.add(Params::class.java.canonicalName)
+        types.add(MutableParams::class.java.canonicalName)
         return types
     }
 
@@ -49,10 +47,11 @@ class MorbidMaskRecipe : AbstractProcessor() {
 
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
-
+        annotations.toString().logw()
         "process".logw()
 
         val paramsElements = roundEnv.getElementsAnnotatedWith(Params::class.java)
+
         paramsElements.toString().logw()
 
         paramsElements.forEach {
@@ -78,6 +77,19 @@ class MorbidMaskRecipe : AbstractProcessor() {
 
 
         paramsInfoMap.forEach { (element, paramsInfoList) ->
+            val type = elementUtils.getTypeElement("android.support.v7.app.AppCompatActivity").asType()
+            type.toString().logw()
+
+            element.asType().toString().logw()
+            val typeMirror = element.asType()
+
+            "super types:".logw()
+            val directSupertypes = processingEnv.typeUtils.directSupertypes(typeMirror)
+            directSupertypes.toString().logw()
+
+            val subtype = processingEnv.typeUtils.isSubtype(element.asType(), type)
+            subtype.toString().logw()
+
             val file = ParamsFileGenerator(element, paramsInfoList).generate()
             val kaptKotlinGeneratedDir = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION_NAME]
             file.writeTo(File(kaptKotlinGeneratedDir))

@@ -18,7 +18,7 @@ import zlc.season.morbidmask.*
     Var("key4"),
     Var("key5", int)
 )
-class MainActivity : AppCompatActivity() {
+class MainActivity : Main2Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
