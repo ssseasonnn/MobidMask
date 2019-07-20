@@ -1,1 +1,1 @@
-include ':app', ':morbidmask', ':MorbidMaskRecipe'
+include ':app', ':morbidmask', ':morbidmask-recipe'

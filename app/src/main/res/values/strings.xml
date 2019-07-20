@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MorbidMaskApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pref_dream_text_key">pref_dream_text</string>
+    <string name="pref_dream_text_default">zzzZZZzzz</string>
 </resources>

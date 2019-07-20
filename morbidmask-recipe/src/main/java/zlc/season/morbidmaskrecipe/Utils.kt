@@ -1,10 +1,56 @@
 package zlc.season.morbidmaskrecipe
 
+import com.squareup.kotlinpoet.*
 import javax.lang.model.element.Element
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
+
+fun String.mapClassName(): ClassName {
+    return when (this) {
+        "byte" -> BYTE
+        "short" -> SHORT
+        "int" -> INT
+        "long" -> LONG
+        "float" -> FLOAT
+        "double" -> DOUBLE
+        "char" -> CHAR
+        "boolean" -> BOOLEAN
+        "java.lang.String" -> STRING
+        else -> ClassName.bestGuess(this)
+    }
+}
+
+fun ClassName.isBasic(): Boolean {
+    return when (this) {
+        BYTE,
+        SHORT,
+        INT,
+        LONG,
+        FLOAT,
+        DOUBLE,
+        CHAR,
+        BOOLEAN,
+        STRING -> true
+        else -> false
+    }
+}
+
+fun ClassName.getDefaultValue(): String {
+    return when (this) {
+        BYTE -> "0"
+        SHORT -> "0"
+        INT -> "0"
+        LONG -> "0L"
+        FLOAT -> "0f"
+        DOUBLE -> "0.0"
+        CHAR -> "'0'"
+        BOOLEAN -> "false"
+        STRING -> "\"\""
+        else -> ""
+    }
+}
 
 fun Element.isActivity(): Boolean {
     return if (this is TypeElement) {
@@ -47,7 +93,7 @@ fun TypeMirror.isSubType(otherType: String): Boolean {
             return true
         }
     }
-    val element = declaredType.asElement() as? TypeElement ?: return false
+    val element = declaredType.asElement() as TypeElement
     val superType = element.superclass
     if (superType.isSubType(otherType)) {
         return true
