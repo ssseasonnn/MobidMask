@@ -1,4 +1,4 @@
-package zlc.season.morbidmaskrecipe
+package zlc.season.morbidmask.compiler
 
 import com.squareup.kotlinpoet.*
 import javax.lang.model.element.Element

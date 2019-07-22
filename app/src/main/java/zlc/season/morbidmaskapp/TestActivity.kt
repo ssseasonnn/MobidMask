@@ -3,8 +3,8 @@ package zlc.season.morbidmaskapp
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_test.*
-import zlc.season.morbidmask.Params
-import zlc.season.morbidmask.Val
+import zlc.season.morbidmask.annotation.Params
+import zlc.season.morbidmask.annotation.Val
 
 @Params(
     Val("byteParam", Byte::class),

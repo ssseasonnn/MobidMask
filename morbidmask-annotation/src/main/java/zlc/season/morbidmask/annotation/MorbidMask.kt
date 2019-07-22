@@ -1,4 +1,4 @@
-package zlc.season.morbidmask
+package zlc.season.morbidmask.annotation
 
 import kotlin.reflect.KClass
 
@@ -28,5 +28,3 @@ annotation class Var(
     val key: String,
     val type: KClass<*> = String::class
 )
-
-

@@ -1,4 +1,4 @@
-package zlc.season.morbidmaskrecipe
+package zlc.season.morbidmask.compiler
 
 import com.google.auto.common.MoreElements
 import com.squareup.kotlinpoet.*

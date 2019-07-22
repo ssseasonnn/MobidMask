@@ -1,6 +1,5 @@
 package zlc.season.morbidmaskapp
 
-import android.content.Intent
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -11,10 +10,10 @@ class MainActivity : TestActivity() {
         setContentView(R.layout.activity_main)
 
         btn_activity.setOnClickListener {
-            val intent = Intent(this, TestActivity::class.java)
-            intent.putExtra("a", "123")
-            intent.putExtra("b", 1)
-            intent.putExtra("c", false)
+            val intent = TestDirector.of()
+                .byteParam(1)
+                .get()
+
             startActivity(intent)
         }
 

@@ -2,7 +2,5 @@ apply plugin: 'kotlin'
 
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    api 'com.google.code.gson:gson:2.8.5'
 
-    api project(':morbidmask-annotation')
 }

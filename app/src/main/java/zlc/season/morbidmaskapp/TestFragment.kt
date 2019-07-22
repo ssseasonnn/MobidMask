@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_test.*
-import zlc.season.morbidmask.Params
-import zlc.season.morbidmask.Val
+import zlc.season.morbidmask.annotation.Params
+import zlc.season.morbidmask.annotation.Val
 
 @Params(
     Val("byteParam", Byte::class),

@@ -1,8 +1,8 @@
-package zlc.season.morbidmaskrecipe
+package zlc.season.morbidmask.compiler
 
 import com.google.auto.service.AutoService
-import zlc.season.morbidmask.MutableParams
-import zlc.season.morbidmask.Params
+import zlc.season.morbidmask.annotation.MutableParams
+import zlc.season.morbidmask.annotation.Params
 import java.io.File
 import java.util.*
 import javax.annotation.processing.AbstractProcessor
@@ -42,7 +42,8 @@ class MorbidMaskRecipe : AbstractProcessor() {
                     each.type
                 } catch (exception: MirroredTypeException) {
                     val typeString = exception.typeMirror.toString()
-                    val paramsInfo = ParamsInfo(each.key, typeString.mapClassName(), false)
+                    val paramsInfo =
+                        ParamsInfo(each.key, typeString.mapClassName(), false)
                     saveParamsInfo(it, paramsInfo)
                 }
             }
@@ -58,7 +59,8 @@ class MorbidMaskRecipe : AbstractProcessor() {
                     each.type
                 } catch (exception: MirroredTypeException) {
                     val typeString = exception.typeMirror.toString()
-                    val paramsInfo = ParamsInfo(each.key, typeString.mapClassName(), true)
+                    val paramsInfo =
+                        ParamsInfo(each.key, typeString.mapClassName(), true)
                     saveParamsInfo(it, paramsInfo)
                 }
             }

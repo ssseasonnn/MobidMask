@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import kotlinx.android.synthetic.main.dialog_test.*
-import zlc.season.morbidmask.Params
-import zlc.season.morbidmask.Val
+import zlc.season.morbidmask.annotation.Params
+import zlc.season.morbidmask.annotation.Val
 
 @Params(
     Val("byteParam", Byte::class),
