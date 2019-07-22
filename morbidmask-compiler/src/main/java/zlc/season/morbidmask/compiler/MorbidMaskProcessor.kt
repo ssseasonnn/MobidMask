@@ -67,13 +67,16 @@ class MorbidMaskProcessor : AbstractProcessor() {
         }
 
         paramsInfoMap.forEach { (element, paramsInfoList) ->
-            val fileSpec = ParamsFileGenerator(element, paramsInfoList).generate()
             val kaptKotlinGeneratedDir = processingEnv.options["kapt.kotlin.generated"]
+
+            val paramFile = ParamsFileGenerator(element, paramsInfoList).generate()
+            val directorFile = DirectorFileGenerator(element, paramsInfoList).generate()
 
             if (kaptKotlinGeneratedDir == null) {
                 "kapt kotlin generate dir is not found!".loge()
             } else {
-                fileSpec.writeTo(File(kaptKotlinGeneratedDir))
+                paramFile.writeTo(File(kaptKotlinGeneratedDir))
+                directorFile.writeTo(File(kaptKotlinGeneratedDir))
             }
         }
 

@@ -70,6 +70,15 @@ fun Element.isFragment(): Boolean {
     }
 }
 
+fun Element.isDialogFragment(): Boolean {
+    return if (this is TypeElement) {
+        val typeMirror = this.asType()
+        typeMirror.isSubType("android.support.v4.app.DialogFragment")
+    } else {
+        false
+    }
+}
+
 fun TypeMirror.isSubType(otherType: String): Boolean {
     if (isTypeEqual(otherType)) {
         return true

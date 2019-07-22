@@ -10,11 +10,12 @@ class MainActivity : TestActivity() {
         setContentView(R.layout.activity_main)
 
         btn_activity.setOnClickListener {
-            val intent = TestDirector.of()
+            TestDirector.of(this)
                 .byteParam(1)
-                .get()
+                .stringParam("1123123")
+                .direct()
 
-            startActivity(intent)
+//            startActivity(intent)
         }
 
         btn_fragment.setOnClickListener {
