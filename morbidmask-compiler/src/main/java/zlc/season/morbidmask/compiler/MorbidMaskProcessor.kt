@@ -16,7 +16,7 @@ import javax.tools.Diagnostic
 
 
 @AutoService(Processor::class)
-class MorbidMaskRecipe : AbstractProcessor() {
+class MorbidMaskProcessor : AbstractProcessor() {
 
     private val paramsInfoMap = mutableMapOf<Element, MutableList<ParamsInfo>>()
 
