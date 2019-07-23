@@ -3,8 +3,10 @@ package zlc.season.morbidmaskapp
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_test.*
+import zlc.season.morbidmask.annotation.MutableParams
 import zlc.season.morbidmask.annotation.Params
 import zlc.season.morbidmask.annotation.Val
+import zlc.season.morbidmask.annotation.Var
 
 @Params(
     Val("byteParam", Byte::class),
@@ -16,6 +18,9 @@ import zlc.season.morbidmask.annotation.Val
     Val("charParam", Char::class),
     Val("booleanParam", Boolean::class),
     Val("stringParam", String::class)
+)
+@MutableParams(
+    Var("test")
 )
 open class TestActivity : AppCompatActivity() {
 
@@ -39,5 +44,8 @@ open class TestActivity : AppCompatActivity() {
         """.trimIndent()
 
         tv_content.text = content
+
+        //change params
+        params.test = "123"
     }
 }

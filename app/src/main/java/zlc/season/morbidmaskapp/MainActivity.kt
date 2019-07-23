@@ -10,23 +10,35 @@ class MainActivity : TestActivity() {
         setContentView(R.layout.activity_main)
 
         btn_activity.setOnClickListener {
-            TestDirector.of(this)
+            TestActivityDirector.of(this)
                 .byteParam(1)
-                .stringParam("1123123")
+                .shortParam(123)
+                .intParam(1123123123)
+                .longParam(123123123123123123)
+                .booleanParam(true)
+                .floatParam(123f)
+                .stringParam("This is string param")
+                .test("This is a mutable param")
                 .direct()
-
-//            startActivity(intent)
         }
 
         btn_fragment.setOnClickListener {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            fragmentTransaction.add(R.id.fragment_container, TestFragment())
-            fragmentTransaction.commit()
+
+            TestFragmentDirector.of()
+                .stringParam("hhhhh")
+                .direct {
+                    val fragmentTransaction = supportFragmentManager.beginTransaction()
+                    fragmentTransaction.add(R.id.fragment_container, it)
+                    fragmentTransaction.commit()
+                }
         }
 
         btn_dialog.setOnClickListener {
-            val dialog = TestDialogFragment()
-            dialog.show(supportFragmentManager, "")
+            TestDialogFragmentDirector.of()
+                .stringParam("asdf")
+                .direct {
+                    it.show(supportFragmentManager, "")
+                }
         }
     }
 }

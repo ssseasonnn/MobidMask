@@ -46,8 +46,8 @@ class ParamsFileGenerator(
         val bundleClass = ClassName("android.os", "Bundle")
 
         val typeSpec = when {
-            element.isActivity() -> initActivityTypeSpec(originClass, paramClass)
-            element.isFragment() -> initFragmentTypeSpec(originClass, paramClass)
+            element.isActivity() -> companionForActivity(originClass, paramClass)
+            element.isFragment() -> companionForFragment(originClass, paramClass)
             else -> throw IllegalStateException("MobidMask not support this class: [$originClassName]!")
         }
 
@@ -74,7 +74,6 @@ class ParamsFileGenerator(
             .build()
     }
 
-
     private fun ParamsInfo.initializer(): String {
         return if (className.isBasic()) {
             """bundle?.get${className.simpleName}("$key") ?: ${className.getDefaultValue()}
@@ -86,17 +85,7 @@ class ParamsFileGenerator(
         }
     }
 
-
-    /**
-     *  generate code:
-     *
-     *    companion object {
-     *        fun of(activity: MainActivity): MainActivityParams {
-     *            return MainActivityParams(activity.intent.extras)
-     *        }
-     *    }
-     */
-    private fun initActivityTypeSpec(originClass: ClassName, paramClass: ClassName): TypeSpec {
+    private fun companionForActivity(originClass: ClassName, paramClass: ClassName): TypeSpec {
         return TypeSpec.companionObjectBuilder()
             .addFunction(
                 FunSpec.builder("of")
@@ -108,16 +97,7 @@ class ParamsFileGenerator(
             .build()
     }
 
-    /**
-     *  generate code:
-     *
-     *    companion object {
-     *        fun of(fragment: MainFragment): MainFragmentParams {
-     *            return MainFragmentParams(fragment.arguments)
-     *        }
-     *    }
-     */
-    private fun initFragmentTypeSpec(originClass: ClassName, paramClass: ClassName): TypeSpec {
+    private fun companionForFragment(originClass: ClassName, paramClass: ClassName): TypeSpec {
         return TypeSpec.companionObjectBuilder()
             .addFunction(
                 FunSpec.builder("of")

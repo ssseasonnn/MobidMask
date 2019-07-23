@@ -10,8 +10,7 @@ import javax.lang.model.element.Element
  * ```
  * @Params(
  *    Val("boolean", Boolean::class),
- *    Val("string", String::class),
- *    Val("char", Char::class)
+ *    Val("string", String::class)
  * )
  * class MainActivity
  * ```
@@ -19,15 +18,25 @@ import javax.lang.model.element.Element
  * will generate :
  *
  * ```
- * class MainActivityParams private constructor(bundle: Bundle?) {
+ * class MainActivityDirector private constructor(private val context: Context) {
+ *      private val intent = Intent(context, MainActivity::class.java)
  *
- *      val boolean: Boolean = bundle?.getBoolean("boolean") ?: false
- *      val string: String = bundle?.getString("string") ?: ""
- *      val char: Char = bundle?.getChar("char") ?: '0'
+ *      fun boolean(key: Boolean): MainActivityDirector {
+ *          intent.putExtra("boolean", key)
+ *
+ *          return this
+ *      }
+ *
+ *      fun string(key: String): MainActivityDirector {
+ *          intent.putExtra("string",key)
+ *          return this
+ *      }
  *
  *      companion object {
- *          fun of(activity: MainActivity): MainActivityParams = MainActivityParams(activity.intent.extras)
- *      }
+ *           fun of(context: Context): MainActivityDirector {
+ *               return MainActivityDirector(context)
+ *           }
+ *       }
  * }
  * ```
  */
@@ -36,15 +45,15 @@ class DirectorFileGenerator(
     private val paramList: List<ParamsInfo>
 ) {
 
-    val packageName = MoreElements.getPackage(element).qualifiedName.toString()
-    val originClassName = element.simpleName.toString()
-    val directorClassName = originClassName + "Director"
+    private val packageName = MoreElements.getPackage(element).qualifiedName.toString()
+    private val originClassName = element.simpleName.toString()
+    private val directorClassName = originClassName + "Director"
 
-    val originClass = ClassName(packageName, originClassName)
-    val directorClass = ClassName(packageName, directorClassName)
+    private val originClass = ClassName(packageName, originClassName)
+    private val directorClass = ClassName(packageName, directorClassName)
 
-    val intentClass = ClassName("android.content", "Intent")
-    val bundleClass = ClassName("android.os", "Bundle")
+    private val intentClass = ClassName("android.content", "Intent")
+    private val bundleClass = ClassName("android.os", "Bundle")
 
     private val contextClass = ClassName("android.content", "Context")
 
@@ -70,7 +79,7 @@ class DirectorFileGenerator(
                     .addModifiers(KModifier.PRIVATE)
                     .build()
             )
-            .addType(initActivityTypeSpec(directorClass))
+            .addType(companionForActivity(directorClass))
 
         classBuilder.addProperty(
             PropertySpec.builder("intent", intentClass)
@@ -111,7 +120,7 @@ class DirectorFileGenerator(
                     .addModifiers(KModifier.PRIVATE)
                     .build()
             )
-            .addType(initFragmentTypeSpec(directorClass))
+            .addType(companionForFragment(directorClass))
 
         classBuilder.addProperty(
             PropertySpec.builder("bundle", bundleClass)
@@ -161,29 +170,7 @@ class DirectorFileGenerator(
             .build()
     }
 
-
-    private fun ParamsInfo.initializer(): String {
-        return if (className.isBasic()) {
-            """bundle?.get${className.simpleName}("$key") ?: ${className.getDefaultValue()}
-            """.trimIndent()
-        } else {
-            val gsonClass = ClassName("com.google.gson", "Gson")
-            """$gsonClass().fromJson(bundle?.getString("$key") ?: "{}", ${className.simpleName}::class.java)
-            """.trimIndent()
-        }
-    }
-
-
-    /**
-     *  generate code:
-     *
-     *    companion object {
-     *        fun of(activity: MainActivity): MainActivityParams {
-     *            return MainActivityParams(activity.intent.extras)
-     *        }
-     *    }
-     */
-    private fun initActivityTypeSpec(directorClass: ClassName): TypeSpec {
+    private fun companionForActivity(directorClass: ClassName): TypeSpec {
         return TypeSpec.companionObjectBuilder()
             .addFunction(
                 FunSpec.builder("of")
@@ -195,16 +182,7 @@ class DirectorFileGenerator(
             .build()
     }
 
-    /**
-     *  generate code:
-     *
-     *    companion object {
-     *        fun of(fragment: MainFragment): MainFragmentParams {
-     *            return MainFragmentParams(fragment.arguments)
-     *        }
-     *    }
-     */
-    private fun initFragmentTypeSpec(directorClass: ClassName): TypeSpec {
+    private fun companionForFragment(directorClass: ClassName): TypeSpec {
         return TypeSpec.companionObjectBuilder()
             .addFunction(
                 FunSpec.builder("of")
