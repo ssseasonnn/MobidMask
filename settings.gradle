@@ -1,1 +1,1 @@
-include ':app', ':morbidmask', ':morbidmask-compiler', ':morbidmask-annotation'
+include ':app', ':morbidmask', ':compiler', ':annotation'

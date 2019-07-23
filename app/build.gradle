@@ -30,9 +30,10 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
 
 //    implementation project(':morbidmask')
-    kapt project(':morbidmask-compiler')
-    implementation 'com.github.ssseasonnn.MobidMask:morbidmask:1.0.1'
-//    kapt 'com.github.ssseasonnn.MobidMask:morbidmask-compiler:1.0.1'
+//    kapt project(':morbidmask-compiler')
+
+    implementation 'com.github.ssseasonnn.MobidMask:morbidmask:1.0.2'
+    kapt 'com.github.ssseasonnn.MobidMask:compiler:1.0.2'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'

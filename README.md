@@ -46,178 +46,179 @@ dependencies {
 
 ### First Blood
 
-- For Activity:
+- Add annotations to the Activity:
 
     ```kotlin
     @Params(
-        Val("int_key", Int::class),
-        Val("boolean_key", Boolean::class),
-        Val("string_key", String::class)
+        Val("intParam", Int::class),
+        Val("booleanParam", Boolean::class),
+        Val("stringParam", String::class)
     )
     open class TestActivity : AppCompatActivity() 
     ```  
     
-    As you can see, we no longer need to override the **viewType()** method to specify the item type!
-    Yasha will automatically determine the type of each item!
+    The Params annotation tells the Activity what type of parameters it needs and the name of the parameters.
     
-- Next create your own DataSource.
+    For example, the parameters of TestActivity are:
+    - intParam :Int 
+    - booleanParam :Boolean 
+    - stringParam :String
+    
+- Pass parameters to Activity:
 
-    As shown below, we have inherited **YashaDataSource**
-
+    After the Params annotation is compiled, the Director file corresponding to the Activity will be generated. 
+    The naming rule is the Activity name + Director suffix. 
+    
+    For example, the above TestActivity will generate the TestActivityDirector file..
+    
     ```kotlin
-    class DemoDataSource : YashaDataSource() {
+    btn_activity.setOnClickListener {
+        //Quickly pass parameters to TestActivity via Director Security
+        TestActivityDirector.of(this)
+            .intParam(1123123123)
+            .booleanParam(true)
+            .stringParam("This is string param")
+            .direct()
+    }
+    ```
     
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
+- Get the parameters passed to the Activity:
+
+    After the Params annotation is compiled, in addition to generating the Director file, 
+    the corresponding Params file will be generated. 
+    The naming rule is the Activity name + Params suffix.
     
-            //loadInitial will be called in the io thread, so there is no need to worry about any time-consuming operations
-            Thread.sleep(2000)
+    For example, the above TestActivity will generate the TestActivityParams file.
     
-            // loading
-            val items = mutableListOf<YashaItem>()
-            for (i in 0 until 10) {
-                items.add(NormalItem(i))
-            }
+    ```kotlin
+    class TestActivity : AppCompatActivity() {
     
-            //set result
-            loadCallback.setResult(items)
-        }
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContentView(R.layout.activity_test)
     
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            //in the io thread
-            Thread.sleep(2000)
-    
-            val items = mutableListOf<YashaItem>()
-            for (i in page * 10 until (page + 1) * 10) {
-                items.add(NormalItem(i))
-            }
-    
-            loadCallback.setResult(items)
+            val params = TestActivityParams.of(this)
+          
+            Log.d("TAG", params.intParam.toString())
+            Log.d("TAG", params.booleanParam.toString())
+            Log.d("TAG", params.stringParam)
         }
     }
-    
     ```
     
-- Then, start rendering!
+### Double Kill 
+
+Next, try passing the Fragment parameters.
+
+- Add Params annotation:
 
     ```kotlin
-   recycler_view.linear(dataSource) {
-       renderItem<NormalItem> {
-           res(R.layout.view_holder_normal)
-           onBind {
-               tv_normal_content.text = data.toString()
-           }
-       }
-       renderItem<HeaderItem> {
-           res(R.layout.view_holder_header)
-           onBind {
-               tv_header_content.text = data.toString()
-           }
-       }
-       renderItem<FooterItem> {
-           res(R.layout.view_holder_footer)
-           onBind {
-               tv_footer_content.text = data.toString()
-           }
-       }
-   }
+    @Params(
+        Val("intParam", Int::class),
+        Val("booleanParam", Boolean::class),
+        Val("stringParam", String::class)
+    )
+    class TestFragment : Fragment()
     ```
     
-   As you can see, we don't have an Adapter, no ViewHolder! Yes, this is the power of the Yasha!
+- Passing parameters to Fragment:
 
-### Double Kill
-
-By default, Yasha will show us a built-in loading status. If you want to change it, it's very convenient. Let's take a look. 
-
-- Let's first create a data type that represents the state:
-
+    Similarly, after the Params annotation is compiled, the Director file corresponding to the Fragment will be generated. 
+    The naming rule is the Fragment name + Director suffix. 
+    
+    For example, the above TestFragment will generate the TestFragmentDirector file..
+    
     ```kotlin
-    class StateItem(val state: Int, val retry: () -> Unit) : YashaItem
+    btn_fragment.setOnClickListener {
+          TestFragmentDirector.of()
+              .intParam(1123123123)
+              .booleanParam(true)
+              .stringParam("This is string param")
+              .direct {
+                  val fragmentTransaction = supportFragmentManager.beginTransaction()
+                  fragmentTransaction.add(R.id.fragment_container, it)
+                  fragmentTransaction.commit()
+          }
+    }
     ```
+    
+- Get the parameters passed to the Fragment:
+
+   After the Params annotation is compiled, in addition to generating the Director file, 
+   the corresponding Params file will be generated. The naming rule is Fragment name + Params suffix. 
+   
+   For example, the above TestFragment will generate the TestFragmentParams file.. 
+    
+    ```kotlin
+    class TestFragment : Fragment() {
   
-- Similarly add our state Item in the DataSource:
-
-    ```kotlin
-    class DemoDataSource : YashaDataSource() {
-
-        override fun loadInitial(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun loadAfter(loadCallback: LoadCallback<YashaItem>) {
-            //...
-        }
-
-        override fun onStateChanged(newState: Int) {
-            //Add an extra state Item using the DataSource's setState method
-            setState(StateItem(state = newState, retry = ::retry))
-        }
-    }
-    ```
-    
-- Finally, render it! Remember, we no longer need an Adapter and no longer need ViewHolder!
-
-    ```kotlin
-    recycler_view.linear(dataSource) {
-        
-        renderItem<StateItem> {
-            res(R.layout.view_holder_state)
-            onBind {
-                tv_state_content.setOnClickListener {
-                    data.retry()
-                }
-                when {
-                    data.state == FetchingState.FETCHING -> {
-                        state_loading.visibility = View.VISIBLE
-                        tv_state_content.visibility = View.GONE
-                    }
-                    data.state == FetchingState.FETCHING_ERROR -> {
-                        state_loading.visibility = View.GONE
-                        tv_state_content.visibility = View.VISIBLE
-                    }
-                    data.state == FetchingState.DONE_FETCHING -> {
-                        state_loading.visibility = View.GONE
-                        tv_state_content.visibility = View.GONE
-                    }
-                    else -> {
-                        state_loading.visibility = View.GONE
-                        tv_state_content.visibility = View.GONE
-                    }
-                }
-            }
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            val params = TestFragmentParams.of(this)
+          
+            Log.d("TAG", params.intParam.toString())
+            Log.d("TAG", params.booleanParam.toString())
+            Log.d("TAG", params.stringParam)
         }
     }
     ```
 
 ### Triple Kill
 
-- Refresh and retry
+Pass the custom data type
 
-    Since the Yasha uses the DataSource of the Sange, the same is true, when the data needs to be refreshed, 
-    the **invalidate()** method is called.
-    When the load fails and needs to be retried, call the **retry()** method.
+In addition to the above basic data types, it also supports custom data types. 
 
-- Custom DiffCallback
-
-    Like Sange, you can change the comparison logic according to your actual situation:
+- Add custom type parameters:
 
     ```kotlin
-    class NormalItem(val i: Int) : YashaItem {
+    //custom type    
+    class CustomEntity(
+        val id: Int,
+        val content: String
+    )
+  
+    @Params(
+        Val("customParam", CustomEntity::class)
+    )
+    class TestActivity : AppCompatActivity() 
+    ```
 
-        override fun areContentsTheSame(other: Differ): Boolean {
-            //use your own diff logic
-            //...
-        }
+- Pass custom type parameters:
 
-        override fun areItemsTheSame(other: Differ): Boolean {
-            //use your own diff logic
-            //...
-        }
-
-        override fun getChangePayload(other: Differ): Any? {
-            //...
-        }
+    ```kotlin
+    btn_activity.setOnClickListener {
+        TestActivityDirector.of(this)
+            .customParam(CustomEntity(123, "Custom entity content"))
+            .direct()
     }
     ```
+
+> Custom data types are serialized and deserialized by default using Gson, 
+so please keep the custom data type in the release environment to avoid problems.!
+
+
+### Ultra Kill
+
+Generate **var** type parameters with **MutableParams** annotations.
+
+As seen above, only the **val** immutable type parameter can be defined by the **Params** annotation. 
+To define the **var** variable type parameter, you can pass **MutableParams** and **Var** Declare a variable type parameter.
+
+eg:
+
+```kotlin
+@Params(
+    Val("charParam", Char::class),
+    Val("booleanParam", Boolean::class),
+    Val("stringParam", String::class)
+)
+@MutableParams(
+    Var("test", String::class),
+    Var("test1", Boolean::class)
+)
+class TestActivity : AppCompatActivity() 
+```
 
 
 ### License

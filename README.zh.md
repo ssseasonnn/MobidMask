@@ -161,34 +161,56 @@ dependencies {
 
 除了上述基本数据类型外,还支持自定义的数据类型. 
 
-- 例如:
-
-    Since the Yasha uses the DataSource of the Sange, the same is true, when the data needs to be refreshed, 
-    the **invalidate()** method is called.
-    When the load fails and needs to be retried, call the **retry()** method.
-
-- Custom DiffCallback
-
-    Like Sange, you can change the comparison logic according to your actual situation:
+- 添加自定义类型参数:
 
     ```kotlin
-    class NormalItem(val i: Int) : YashaItem {
+    //自定义数据类型    
+    class CustomEntity(
+        val id: Int,
+        val content: String
+    )
+  
+    //使用自定义数据类型  
+    @Params(
+        Val("customParam", CustomEntity::class)
+    )
+    class TestActivity : AppCompatActivity() 
+    ```
 
-        override fun areContentsTheSame(other: Differ): Boolean {
-            //use your own diff logic
-            //...
-        }
+- 传递自定义类型参数:
 
-        override fun areItemsTheSame(other: Differ): Boolean {
-            //use your own diff logic
-            //...
-        }
-
-        override fun getChangePayload(other: Differ): Any? {
-            //...
-        }
+    ```kotlin
+    btn_activity.setOnClickListener {
+        TestActivityDirector.of(this)
+            .customParam(CustomEntity(123, "Custom entity content"))
+            .direct()
     }
     ```
+
+> 自定义数据类型默认使用Gson进行序列化和反序列化, 因此请在release环境中Keep自定义的数据类型, 以免发生问题!
+
+
+### Ultra Kill
+
+利用**MutableParams**注解生成 **var** 类型参数.
+
+如上所见, 通过**Params**注解只能定义**val**不可变类型的参数, 要想定义**var**可变类型的参数, 可以通过
+**MutableParams**及**Var**声明可变类型的参数.
+
+例如:
+
+```kotlin
+@Params(
+    Val("charParam", Char::class),
+    Val("booleanParam", Boolean::class),
+    Val("stringParam", String::class)
+)
+@MutableParams(
+    Var("test", String::class),
+    Var("test1", Boolean::class)
+)
+class TestActivity : AppCompatActivity() 
+```
 
 
 ### License

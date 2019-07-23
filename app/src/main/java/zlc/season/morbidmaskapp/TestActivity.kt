@@ -22,9 +22,10 @@ import zlc.season.morbidmask.annotation.Var
     Val("customParam", CustomEntity::class)
 )
 @MutableParams(
-    Var("test")
+    Var("test", String::class),
+    Var("test1", Boolean::class)
 )
-open class TestActivity : AppCompatActivity() {
+class TestActivity : AppCompatActivity() {
 
     private val params by lazy { TestActivityParams.of(this) }
 
@@ -53,5 +54,6 @@ open class TestActivity : AppCompatActivity() {
 
         //change params
         params.test = "123"
+        params.test1 = true
     }
 }
