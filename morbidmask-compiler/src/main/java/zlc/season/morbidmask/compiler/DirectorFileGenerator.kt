@@ -90,7 +90,7 @@ class DirectorFileGenerator(
         paramList.forEach {
             val funSpec = FunSpec.builder(it.key)
                 .addParameter("key", it.className)
-                .addStatement("intent.putExtra(\"${it.key}\",key)")
+                .addStatement(customActivityEntityStatement(it))
                 .addStatement("return this")
                 .returns(directorClass)
                 .build()
@@ -113,6 +113,16 @@ class DirectorFileGenerator(
             .build()
     }
 
+    private fun customActivityEntityStatement(paramsInfo: ParamsInfo): String {
+        if (paramsInfo.className.isBasic()) {
+            return "intent.putExtra(\"${paramsInfo.key}\",key)"
+        } else {
+            return """
+                intent.putExtra("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
+            """.trimIndent()
+        }
+    }
+
     private fun generateFragmentDirector(): FileSpec {
         val classBuilder = TypeSpec.classBuilder(directorClass.simpleName)
             .primaryConstructor(
@@ -131,7 +141,7 @@ class DirectorFileGenerator(
         paramList.forEach {
             val paramSetter = FunSpec.builder(it.key)
                 .addParameter("key", it.className)
-                .addStatement("bundle.put${it.className.simpleName}(\"${it.key}\",key)")
+                .addStatement(customFragmentEntityStatement(it))
                 .addStatement("return this")
                 .returns(directorClass)
                 .build()
@@ -168,6 +178,16 @@ class DirectorFileGenerator(
         return FileSpec.builder(packageName, directorClassName)
             .addType(classBuilder.build())
             .build()
+    }
+
+    private fun customFragmentEntityStatement(paramsInfo: ParamsInfo): String {
+        if (paramsInfo.className.isBasic()) {
+            return "bundle.put${paramsInfo.className.simpleName}(\"${paramsInfo.key}\",key)"
+        } else {
+            return """
+                bundle.putString("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
+            """.trimIndent()
+        }
     }
 
     private fun companionForActivity(directorClass: ClassName): TypeSpec {

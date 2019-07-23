@@ -1,9 +1,10 @@
 package zlc.season.morbidmaskapp
 
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : TestActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +19,7 @@ class MainActivity : TestActivity() {
                 .booleanParam(true)
                 .floatParam(123f)
                 .stringParam("This is string param")
-                .test("This is a mutable param")
+                .customParam(CustomEntity(999, "Custom entity content"))
                 .direct()
         }
 
@@ -26,6 +27,7 @@ class MainActivity : TestActivity() {
 
             TestFragmentDirector.of()
                 .stringParam("hhhhh")
+                .customParam(CustomEntity(999, "Custom entity content"))
                 .direct {
                     val fragmentTransaction = supportFragmentManager.beginTransaction()
                     fragmentTransaction.add(R.id.fragment_container, it)

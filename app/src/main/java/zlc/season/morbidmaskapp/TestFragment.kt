@@ -18,11 +18,11 @@ import zlc.season.morbidmask.annotation.Val
     Val("doubleParam", Double::class),
     Val("charParam", Char::class),
     Val("booleanParam", Boolean::class),
-    Val("stringParam", String::class)
+    Val("stringParam", String::class),
+    Val("customParam", CustomEntity::class)
 )
 class TestFragment : Fragment() {
     private val params by lazy { TestFragmentParams.of(this) }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +44,7 @@ class TestFragment : Fragment() {
             charParam = ${params.charParam}
             booleanParam = ${params.booleanParam}
             stringParam = ${params.stringParam}
+            customParam = [${params.customParam.id},${params.customParam.content}]
         """.trimIndent()
 
         tv_content.text = content
