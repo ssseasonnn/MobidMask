@@ -9,14 +9,14 @@ import javax.lang.model.type.TypeMirror
 
 fun String.mapClassName(): ClassName {
     return when (this) {
-        "byte" -> BYTE
-        "short" -> SHORT
-        "int" -> INT
-        "long" -> LONG
-        "float" -> FLOAT
-        "double" -> DOUBLE
-        "char" -> CHAR
-        "boolean" -> BOOLEAN
+        "byte", "java.lang.Byte" -> BYTE
+        "short", "java.lang.Short" -> SHORT
+        "int", "java.lang.Integer" -> INT
+        "long", "java.lang.Long" -> LONG
+        "float", "java.lang.Float" -> FLOAT
+        "double", "java.lang.Double" -> DOUBLE
+        "char", "java.lang.Character" -> CHAR
+        "boolean", "java.lang.Boolean" -> BOOLEAN
         "java.lang.String" -> STRING
         else -> ClassName.bestGuess(this)
     }
