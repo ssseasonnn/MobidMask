@@ -43,7 +43,7 @@ class MorbidMaskProcessor : AbstractProcessor() {
                 } catch (exception: MirroredTypeException) {
                     val typeString = exception.typeMirror.toString()
                     val paramsInfo =
-                        ParamsInfo(each.key, typeString.mapClassName(), false)
+                        ParamsInfo(each.key, exception.typeMirror, typeString.mapClassName(), false)
                     saveParamsInfo(it, paramsInfo)
                 }
             }
@@ -60,7 +60,7 @@ class MorbidMaskProcessor : AbstractProcessor() {
                 } catch (exception: MirroredTypeException) {
                     val typeString = exception.typeMirror.toString()
                     val paramsInfo =
-                        ParamsInfo(each.key, typeString.mapClassName(), true)
+                        ParamsInfo(each.key, exception.typeMirror, typeString.mapClassName(), true)
                     saveParamsInfo(it, paramsInfo)
                 }
             }

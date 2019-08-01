@@ -17,7 +17,9 @@ import zlc.season.morbidmask.annotation.Val;
         @Val(key = "charParam", type = Character.class),
         @Val(key = "booleanParam", type = Boolean.class),
         @Val(key = "stringParam", type = String.class),
-        @Val(key = "customParam", type = CustomEntity.class)
+        @Val(key = "customParam", type = CustomEntity.class),
+        @Val(key = "parcelable", type = ParcelableEntity.class),
+        @Val(key = "serializable", type = SerializableEntity.class)
 })
 public class JavaActivity extends AppCompatActivity {
 
@@ -40,7 +42,9 @@ public class JavaActivity extends AppCompatActivity {
                 "charParam =" + params.getCharParam() + "\n" +
                 "booleanParam =" + params.getByteParam() + "\n" +
                 "stringParam =" + params.getStringParam() + "\n" +
-                "customParam = [" + params.getCustomParam().getId() + "," + params.getCustomParam().getContent() + "]";
+                "customParam = " + params.getCustomParam().toString() + "\n" +
+                "parcelable = " + params.getParcelable().toString() + "\n" +
+                "serializable = " + params.getSerializable().toString() + "\n";
 
         textView.setText(content);
     }

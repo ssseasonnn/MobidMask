@@ -78,6 +78,14 @@ class ParamsFileGenerator(
         return if (className.isBasic()) {
             """bundle?.get${className.simpleName}("$key") ?: ${className.getDefaultValue()}
             """.trimIndent()
+        } else if (typeMirror.isParcelable()) {
+            """
+                bundle?.getParcelable<${className.simpleName}>("$key") ?: ${className.simpleName}()
+            """.trimIndent()
+        } else if (typeMirror.isSerializable()) {
+            """
+                bundle?.getSerializable("$key") as ${className.simpleName}? ?: ${className.simpleName}()
+            """.trimIndent()
         } else {
             val gsonClass = ClassName("com.google.gson", "Gson")
             """$gsonClass().fromJson(bundle?.getString("$key") ?: "{}", ${className.simpleName}::class.java)

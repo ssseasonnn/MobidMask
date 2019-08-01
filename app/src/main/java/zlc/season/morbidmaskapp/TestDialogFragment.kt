@@ -19,7 +19,10 @@ import zlc.season.morbidmask.annotation.Val
     Val("doubleParam", Double::class),
     Val("charParam", Char::class),
     Val("booleanParam", Boolean::class),
-    Val("stringParam", String::class)
+    Val("stringParam", String::class),
+    Val("customParam", CustomEntity::class),
+    Val("parcelable", ParcelableEntity::class),
+    Val("serializable", SerializableEntity::class)
 )
 class TestDialogFragment : DialogFragment() {
     private val params by lazy { TestDialogFragmentParams.of(this) }
@@ -44,6 +47,9 @@ class TestDialogFragment : DialogFragment() {
             charParam = ${params.charParam}
             booleanParam = ${params.booleanParam}
             stringParam = ${params.stringParam}
+            customParam = ${params.customParam}
+             parcelable = ${params.parcelable}
+             serializable = ${params.serializable}
         """.trimIndent()
 
         tv_content.text = content

@@ -19,7 +19,9 @@ import zlc.season.morbidmask.annotation.Val
     Val("charParam", Char::class),
     Val("booleanParam", Boolean::class),
     Val("stringParam", String::class),
-    Val("customParam", CustomEntity::class)
+    Val("customParam", CustomEntity::class),
+    Val("parcelable", ParcelableEntity::class),
+    Val("serializable", SerializableEntity::class)
 )
 class TestFragment : Fragment() {
     private val params by lazy { TestFragmentParams.of(this) }
@@ -44,7 +46,9 @@ class TestFragment : Fragment() {
             charParam = ${params.charParam}
             booleanParam = ${params.booleanParam}
             stringParam = ${params.stringParam}
-            customParam = [${params.customParam.id},${params.customParam.content}]
+            customParam = ${params.customParam}
+             parcelable = ${params.parcelable}
+             serializable = ${params.serializable}
         """.trimIndent()
 
         tv_content.text = content

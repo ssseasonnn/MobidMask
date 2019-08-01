@@ -79,6 +79,14 @@ fun Element.isDialogFragment(): Boolean {
     }
 }
 
+fun TypeMirror.isParcelable(): Boolean {
+    return isSubType("android.os.Parcelable")
+}
+
+fun TypeMirror.isSerializable(): Boolean {
+    return isSubType("java.io.Serializable")
+}
+
 fun TypeMirror.isSubType(otherType: String): Boolean {
     if (isTypeEqual(otherType)) {
         return true

@@ -114,12 +114,23 @@ class DirectorFileGenerator(
     }
 
     private fun customActivityEntityStatement(paramsInfo: ParamsInfo): String {
-        if (paramsInfo.className.isBasic()) {
-            return "intent.putExtra(\"${paramsInfo.key}\",key)"
-        } else {
-            return """
-                intent.putExtra("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
-            """.trimIndent()
+        return when {
+            paramsInfo.className.isBasic() ->
+                """
+                    intent.putExtra("${paramsInfo.key}",key)
+                """.trimIndent()
+            paramsInfo.typeMirror.isParcelable() ->
+                """
+                    intent.putExtra("${paramsInfo.key}",key)
+                """.trimIndent()
+            paramsInfo.typeMirror.isSerializable() ->
+                """
+                    intent.putExtra("${paramsInfo.key}",key)
+                """.trimIndent()
+            else ->
+                """
+                    intent.putExtra("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
+                """.trimIndent()
         }
     }
 
@@ -181,12 +192,20 @@ class DirectorFileGenerator(
     }
 
     private fun customFragmentEntityStatement(paramsInfo: ParamsInfo): String {
-        if (paramsInfo.className.isBasic()) {
-            return "bundle.put${paramsInfo.className.simpleName}(\"${paramsInfo.key}\",key)"
-        } else {
-            return """
-                bundle.putString("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
-            """.trimIndent()
+        return when {
+            paramsInfo.className.isBasic() -> "bundle.put${paramsInfo.className.simpleName}(\"${paramsInfo.key}\",key)"
+            paramsInfo.typeMirror.isParcelable() ->
+                """
+                    bundle.putParcelable("${paramsInfo.key}",key)                    
+                """.trimIndent()
+            paramsInfo.typeMirror.isSerializable() ->
+                """
+                    bundle.putSerializable("${paramsInfo.key}",key)
+                """.trimIndent()
+            else ->
+                """
+                    bundle.putString("${paramsInfo.key}",com.google.gson.Gson().toJson(key))
+                """.trimIndent()
         }
     }
 
