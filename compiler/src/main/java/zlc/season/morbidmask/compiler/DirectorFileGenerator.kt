@@ -108,6 +108,18 @@ class DirectorFileGenerator(
             .build()
         classBuilder.addFunction(directFunSpec)
 
+        val typeName = LambdaTypeName.get(
+            parameters = *arrayOf(intentClass),
+            returnType = UNIT
+        )
+        val directBlockFunSpec = FunSpec.builder("direct")
+            .addParameter(
+                ParameterSpec.builder("block", typeName).build()
+            )
+            .addStatement("block(intent)")
+            .build()
+        classBuilder.addFunction(directBlockFunSpec)
+
         return FileSpec.builder(packageName, directorClassName)
             .addType(classBuilder.build())
             .build()
@@ -193,7 +205,10 @@ class DirectorFileGenerator(
 
     private fun customFragmentEntityStatement(paramsInfo: ParamsInfo): String {
         return when {
-            paramsInfo.className.isBasic() -> "bundle.put${paramsInfo.className.simpleName}(\"${paramsInfo.key}\",key)"
+            paramsInfo.className.isBasic() ->
+                """
+                    bundle.put${paramsInfo.className.simpleName}("${paramsInfo.key}",key)
+                """.trimIndent()
             paramsInfo.typeMirror.isParcelable() ->
                 """
                     bundle.putParcelable("${paramsInfo.key}",key)                    
