@@ -4,7 +4,7 @@
 
 # MorbidMask - 吸血面具
 
-*Read this in other languages: [中文](README.zh.md), [English](README.md)*
+*Read this in other languages: [中文](README.zh.md), [English](README.md), [Change Log](CHANGELOG.md)*
 
 一个安全快速的对Activity或者Fragment传递参数的库
 
@@ -54,7 +54,7 @@ dependencies {
         Val("booleanParam", Boolean::class),
         Val("stringParam", String::class)
     )
-    open class TestActivity : AppCompatActivity() 
+    class TestActivity : AppCompatActivity() 
     ```  
     
     通过Params注解, 告诉该Activity需要的参数类型及参数名称.

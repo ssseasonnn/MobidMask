@@ -4,7 +4,7 @@
 
 # MorbidMask - 吸血面具
 
-*Read this in other languages: [中文](README.zh.md), [English](README.md)*
+*Read this in other languages: [中文](README.zh.md), [English](README.md), [Change Log](CHANGELOG.md)*
 
 A library for fast and safe delivery of parameters for Activities and Fragments.
 
@@ -54,7 +54,7 @@ dependencies {
         Val("booleanParam", Boolean::class),
         Val("stringParam", String::class)
     )
-    open class TestActivity : AppCompatActivity() 
+    class TestActivity : AppCompatActivity() 
     ```  
     
     The Params annotation tells the Activity what type of parameters it needs and the name of the parameters.
