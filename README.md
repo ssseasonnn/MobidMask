@@ -35,9 +35,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-    // Replace xyz with a specific version number, for example 1.0.1
-	implementation 'com.github.ssseasonnn.MobidMask:morbidmask:x.y.z'
-    kapt 'com.github.ssseasonnn.MobidMask:compiler:x.y.z'
+	implementation 'com.github.ssseasonnn.MobidMask:morbidmask:1.0.5'
+    kapt 'com.github.ssseasonnn.MobidMask:compiler:1.0.5'
 }
 ```
 

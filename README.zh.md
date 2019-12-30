@@ -35,9 +35,8 @@ apply plugin: 'kotlin-kapt'
 ...
 
 dependencies {
-    // 替换下面的xyz为真实版本号,例如1.0.1
-	implementation 'com.github.ssseasonnn.MobidMask:morbidmask:x.y.z'
-    kapt 'com.github.ssseasonnn.MobidMask:compiler:x.y.z'
+	implementation 'com.github.ssseasonnn.MobidMask:morbidmask:1.0.5'
+    kapt 'com.github.ssseasonnn.MobidMask:compiler:1.0.5'
 }
 ```
 
