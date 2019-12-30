@@ -64,7 +64,7 @@ fun Element.isActivity(): Boolean {
 fun Element.isFragment(): Boolean {
     return if (this is TypeElement) {
         val typeMirror = this.asType()
-        typeMirror.isSubType("android.support.v4.app.Fragment")
+        typeMirror.isSubType("androidx.fragment.app.Fragment")
     } else {
         false
     }
@@ -73,7 +73,7 @@ fun Element.isFragment(): Boolean {
 fun Element.isDialogFragment(): Boolean {
     return if (this is TypeElement) {
         val typeMirror = this.asType()
-        typeMirror.isSubType("android.support.v4.app.DialogFragment")
+        typeMirror.isSubType("androidx.fragment.app.DialogFragment")
     } else {
         false
     }
